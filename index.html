@@ -9,7 +9,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
-  <meta name="author" content="Tanya Singh and Cesar Aybar" />
+  <meta name="author" content="<b>Tanya Singh and Cesar Aybar</b>"/>
 
   <!-- third party software -->
   <script src="lib/header-attrs-2.6.2/header-attrs.js"></script>
@@ -26,6 +26,13 @@
   <link href="lib/highlightjs-9.12.0/default.css" rel="stylesheet" />
   <script src="lib/highlightjs-9.12.0/highlight.js"></script>
   <link href="lib/style.css" rel="stylesheet" />
+  <link href="lib/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+  <script src="lib/navigation-1.1/codefolding.js"></script>
+  <link href="lib/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+  <link href="lib/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+  <link rel="stylesheet" href="lib/academicons-1.8.0/css/academicons.css"/>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
+
 
   <script type="text/javascript">
   if (window.hljs) {
@@ -39,6 +46,16 @@
 </head>
 
 <body>
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
 
   <div class="container-fluid main-container">
     <!-- setup 3col/9col grid for toc_float and main content  -->
@@ -53,26 +70,101 @@
           <h1 class="title toc-ignore">Cartograms</h1>
           <h4 class="author">Tanya Sighn and Cesar Aybar</h4>
           <h4 class="date">2021/01/04</h4>
+        </div>      
+              
+
+        <div id="single_img" class="section level1" number="1">
+<pre class="sourceCode r"><code class="sourceCode r">
+<span class="kw">library</span>(rnaturalearth)
+<span class="kw">library</span>(hrbrthemes)
+<span class="kw">library</span>(tidyverse)
+<span class="kw">library</span>(gganimate)
+<span class="kw">library</span>(cartogram)
+<span class="kw">library</span>(sf)
+<span class="co"># Get a sf object of worldwide from Natural Earth Data</span>
+worldmap &lt;-<span class="st"> </span><span class="kw">ne_download</span>(<span class="dt">scale =</span> <span class="dv">110</span>,
+                        <span class="dt">type =</span> <span class="st">&quot;countries&quot;</span>,
+                        <span class="dt">category =</span> <span class="st">&quot;cultural&quot;</span>,
+                        <span class="dt">destdir =</span> <span class="kw">tempdir</span>(),
+                        <span class="dt">load =</span> <span class="ot">TRUE</span>,
+                        <span class="dt">returnclass =</span> <span class="st">&quot;sf&quot;</span>)
+<span class="co"># Filter by CONTINENT column to get South-America</span>
+<span class="co"># geometry</span>
+worldmap_pop &lt;-<span class="st"> </span>worldmap <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(CONTINENT <span class="op">==</span><span class="st">&#39;South America&#39;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select</span>(<span class="st">&#39;POP_EST&#39;</span>) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># country population </span>
+<span class="st">  &#39;colnames&lt;-&#39;</span>(<span class="kw">c</span>(<span class="st">&#39;pop&#39;</span>,<span class="st">&#39;geometry&#39;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pop =</span> <span class="kw">as.numeric</span>(pop)<span class="op">/</span><span class="dv">1000000</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">as</span>(<span class="st">&#39;Spatial&#39;</span>) <span class="co"># sf to sp</span>
+<span class="co"># Create cartogram of country population.</span>
+cart_worldmap_pop &lt;-<span class="st"> </span><span class="kw">cartogram_cont</span>(worldmap_pop,<span class="st">&#39;pop&#39;</span>)
+worldmap_pop<span class="op">$</span>group =<span class="st"> </span><span class="dv">0</span> <span class="co"># geometries of the simple map</span>
+cart_worldmap_pop<span class="op">$</span>group =<span class="st"> </span><span class="dv">1</span> <span class="co"># geometries of the cartogram.</span>
+<span class="co"># Bind both in a single sf object</span>
+anim_world &lt;-<span class="st"> </span><span class="kw">rbind</span>(worldmap_pop,
+              cart_worldmap_pop) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">              </span><span class="kw">st_as_sf</span>()
+<span class="co"># Build 100 maps (frames) using cubic spline and </span>
+<span class="co"># compile them in a unique file (*.gif). </span>
+p &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">st_as_sf</span>(anim_world)) <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_sf</span>(<span class="kw">aes</span>(<span class="dt">fill =</span> pop), <span class="dt">alpha=</span><span class="dv">1</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_sf</span>(<span class="dt">crs =</span> <span class="kw">st_crs</span>(anim_world), <span class="dt">datum =</span> <span class="ot">NA</span>) <span class="op">+</span><span class="st"> </span><span class="co">#elimina x and y axis text.</span>
+<span class="st">  </span><span class="kw">scale_fill_viridis_c</span>( <span class="co"># Compose a palette using </span>
+    <span class="dt">trans=</span><span class="st">&#39;sqrt&#39;</span>,
+    <span class="dt">name=</span><span class="st">&quot;Population (M)&quot;</span>,
+    <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">50</span>,<span class="dv">100</span>, <span class="dv">200</span>),
+    <span class="dt">guide =</span> <span class="kw">guide_legend</span>( <span class="dt">keyheight =</span> <span class="kw">unit</span>(<span class="dv">3</span>, <span class="dt">units =</span> <span class="st">&quot;mm&quot;</span>),
+                          <span class="dt">keywidth=</span><span class="kw">unit</span>(<span class="dv">8</span>, <span class="dt">units =</span> <span class="st">&quot;mm&quot;</span>), 
+                          <span class="dt">label.position =</span> <span class="st">&quot;bottom&quot;</span>, 
+                          <span class="dt">title.position =</span> <span class="st">&#39;top&#39;</span>,
+                          <span class="dt">nrow=</span><span class="dv">1</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;South America Population&quot;</span>,
+      <span class="dt">subtitle =</span> <span class="st">&#39;Natural Earth Data&#39;</span>,
+      <span class="dt">x=</span><span class="ot">NULL</span>, 
+      <span class="dt">y=</span><span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_modern_rc</span>(<span class="dt">plot_title_size =</span> <span class="dv">20</span>,
+                  <span class="dt">axis =</span> <span class="ot">FALSE</span>,
+                  <span class="dt">base_size =</span> <span class="dv">16</span>) <span class="op">+</span><span class="st"> </span><span class="co"># my favorite theme!</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="kw">c</span>(<span class="fl">0.8</span>, <span class="fl">0.04</span>), 
+      <span class="dt">axis.text =</span> <span class="kw">element_blank</span>(), 
+      <span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(),
+      <span class="dt">panel.grid.major =</span> <span class="kw">element_blank</span>()) <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">transition_states</span>(group,<span class="dv">2</span>,<span class="dv">1</span>) <span class="op">+</span><span class="st"> </span><span class="co"># gganimate is just magical!</span>
+<span class="st">  </span><span class="kw">ease_aes</span>(<span class="st">&#39;cubic-in-out&#39;</span>)              
+</pre></code>
+
+  <p><img src="img/img_01.gif" width="500px" style="display: block; margin: auto;" /></p>
         </div>
 
-        <div id="what-is-a-cartogram" class="section level1" number="1">
+        <div id="what-is-a-cartogram" class="section level2" number="1">
           <h1 number="1"><span class="header-section-number">1</span> What is a cartogram?</h1>
-          <p>dasdas</p>
+          <p>
+            A cartogram is is a thematic map, in which their <strong>geographic size is altered</strong> to be directly proportional to 
+            selected ratio-level variable. According to preserving shape and topology, cartograms are classified into 
+            <strong>contiguous</strong> (preserve topology, distort shape), <strong>non-contiguous</strong> (preserve shape, distort topology),
+            and <strong>diagrammatic</strong> (distort both).            
+          </p>
         </div>
 
-        <div id="rubber-sheet-distortion-algorithm" class="section level1" number="2">
+        <div id="rubber-sheet-distortion-algorithm" class="section level2" number="2">
           <h1 number="2"><span class="header-section-number">2</span> Rubber sheet distortion algorithm</h1>
-          <p>dasdas</p>
+          <p>
+            Rubber sheet (RSheet) is an iterative algorithm used to create contiguous cartograms. RSheet distorts the space
+            (See equation <strong>1</strong>) to make the polygon areas and the target variable (e.g. temperature) have a linear relationship.
+
+            $$Fi = (PI - q,) P,idij$$
+
+          </p>
         </div>
 
-        <div id="cartogram-timeseries" class="section level1" number="3">
+        <div id="cartogram-timeseries" class="section level3" number="3">
           <h1 number="3"><span class="header-section-number">3</span> Cartogram timeseries</h1>
         </div>
 
-        <div id="cartogram-d3" class="section level1" number="4">
-          <h1 number="4"><span class="header-section-number">4</span> Cartogram D3</h1>
+        <div id="cartogram-d3" class="section level4" number="4">
+          <h1 number="5"><span class="header-section-number">4</span> Cartogram D3</h1>
           <iframe src="cartogram.html" height="650" width="auto" title="Iframe Example"></iframe>
-        </div>
+        </div>        
       </div>
     </div>
   </div>
