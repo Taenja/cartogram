@@ -148,21 +148,45 @@ p &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">
 
         <div id="rubber-sheet-distortion-algorithm" class="section level2" number="2">
           <h1 number="2"><span class="header-section-number">2</span> Rubber sheet distortion algorithm</h1>
-          <p>
+            <p>
             Rubber sheet (RSheet) is an iterative algorithm used to create contiguous cartograms. RSheet distorts the space
             (See equation <strong>1</strong>) to make the polygon areas and the target variable (e.g. temperature) have a linear relationship.
 
-            $$Fi = (PI - q,) P,idij$$
+            $$F_{ij} = (p_j - q_j) p_j/d_ij$$
 
-          </p>
+            Where:
+            <br>
+            <p style="margin-left: 40px">
+                <strong>Fij</strong> = force exerted by polygon j on point i.<br>
+                <strong>pj</strong> = square root (actual area)/square root (π).<br>
+                <strong>qj</strong> = square root (desired area)/square root (π).<br>
+                <strong>dij</strong> = distance from centroid of j to point i<br>
+            </p>
+            See <a href="explain.html">for more details</a>.
+            </p>         
         </div>
 
-        <div id="cartogram-timeseries" class="section level3" number="3">
-          <h1 number="3"><span class="header-section-number">3</span> Cartogram timeseries</h1>
+        <div id="cartogram-timeseries" class="section level3" number="3" styles="font-size: 46px;">
+          <h1 number="3"><span class="header-section-number">3</span> The dataset</h1>
+          <p>
+           This dataset comprised of downscaled climate scenarios for the globe that are derived from the General Circulation Model (GCM) runs conducted under 
+          the Coupled Model Intercomparison Project Phase 5 (CMIP5, see Taylor et al. 2012) and across
+          two of the four greenhouse gas emissions scenarios known as Representative Concentration 
+          Pathways (RCPs, see Meinshausen et al. 2011).
+          <br>
+          The CMIP5 GCM runs were developed in support of the Fifth Assessment Report of the Intergovernmental Panel on Climate Change (IPCC AR5).
+          The  NASA NEX-GDDP dataset was prepared by the Climate Analytics Group and NASA Ames Research 
+          Center using the NASA Earth Exchange, and distributed by the NASA Center for Climate Simulation 
+          (NCCS).
+          </p>          
         </div>
 
         <div id="cartogram-d3" class="section level4" number="4">
           <h1 number="5"><span class="header-section-number">4</span> Cartogram D3</h1>
+          <p>
+          We create a cartogram to analyze the changes in annual mean temperature from 2006-2100 in all the countries
+          around the world using the NASA NEX-GDDP dataset. <a href="cartogram.html">Open here</a>
+          </p>
           <iframe src="cartogram.html" height="650" width="auto" title="Iframe Example"></iframe>
         </div>        
       </div>

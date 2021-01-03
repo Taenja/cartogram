@@ -524,7 +524,7 @@ code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* War
 code > span.cn { color: #880000; } /* Constant */
 code > span.sc { color: #4070a0; } /* SpecialChar */
 code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.ss { color: #4070a0; } /* SpecialString */
 code > span.im { } /* Import */
 code > span.va { color: #19177c; } /* Variable */
 code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
@@ -548,3 +548,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   margin-right: -30px;
 }
 .code-folding-btn { margin-bottom: 4px; }
+
+.cesar {
+  padding: 2px 4px;
+  font-size: 90%;
+  color: #c7254e;
+  background-color: #ffffff;
+  border-radius: 4px;
+}
