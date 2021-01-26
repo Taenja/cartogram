@@ -142,7 +142,7 @@ p &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">
             A cartogram is a thematic map of a set of features, in which their <strong>geographic size is altered</strong> to be directly proportional to 
             selected ratio-level variable, such as population data, travel time, temperature etc. According to preserving shape and topology, cartograms are classified into 
             <strong>contiguous</strong> (preserve topology, distort shape), <strong>non-contiguous</strong> (preserve shape, distort topology),
-            and <strong>diagrammatic</strong> (distort both). there are Dorling cartograms that use a geometric shape for representing areas of interest
+            and <strong>diagrammatic</strong> (distort both). There are Dorling cartograms that use a geometric shape for representing areas of interest
             and cartograms created with the Gastner-Newman algorithm that distort the actual area of interest. Here, we will be using the <strong>Rubber sheet algorithm</strong> 
             to visualize temperature variation over a century.   
           </p>
@@ -199,8 +199,10 @@ p &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">
         <div id="cartogram-d3" class="section level4" number="4">
           <h1 number="5. "><span class="header-section-number">4</span> Cartogram D3</h1>
           <p>
-          We create a cartogram to analyze the changes in annual mean temperature from 2006-2100 in all the countries
+          We created a cartogram to analyze the changes in annual mean temperature from 2006-2100 in all the countries
           around the world using the NASA NEX-GDDP dataset. <a href="cartogram.html">Open here</a>
+          Here, the area of polygons distort proportionaly to the slope of change in temperature over time.
+          (The darker the shade of red, steeper is the slope.)
           </p>
           <iframe src="cartogram.html" height="650" width="auto" title="Iframe Example"></iframe>
         </div>
